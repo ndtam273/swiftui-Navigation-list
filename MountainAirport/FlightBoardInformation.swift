@@ -1,15 +1,15 @@
-/// Copyright (c) 2019 Razeware LLC
-///
+/// Copyright (c) 2020 Razeware LLC
+/// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
 /// in the Software without restriction, including without limitation the rights
 /// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 /// copies of the Software, and to permit persons to whom the Software is
 /// furnished to do so, subject to the following conditions:
-///
+/// 
 /// The above copyright notice and this permission notice shall be included in
 /// all copies or substantial portions of the Software.
-///
+/// 
 /// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
 /// distribute, sublicense, create a derivative work, and/or sell copies of the
 /// Software in any work that is designed, intended, or marketed for pedagogical or
@@ -17,7 +17,7 @@
 /// or information technology.  Permission for such use, copying, modification,
 /// merger, publication, distribution, sublicensing, creation of derivative works,
 /// or sale is expressly withheld.
-///
+/// 
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,42 +28,29 @@
 
 import SwiftUI
 
-struct FlightBoard: View {
+struct FlightBoardInformation: View {
     // MARK: - Properties
-    @State private var hideCancelled = false
-    
-    var showFlights: [FlightInformation] {
-        hideCancelled ?
-            flightData.filter{ $0.status != .cancelled } : flightData
-    }
-    var boardName: String
-    var flightData: [FlightInformation]
+    var flight: FlightInformation
     var body: some View {
-        VStack {
-            List(showFlights) { flight in
-                NavigationLink(
-                    destination: FlightBoardInformation(flight: flight),
-                    label: {
-                        FlightRow(flight: flight)
-                    })
-                
+        VStack(alignment: .leading) {
+            HStack {
+                Text("\(flight.airline) Flight \(flight.number)")
+                    .font(.largeTitle)
+                Spacer()
             }
-            .navigationBarTitle(boardName)
-            .navigationBarItems(trailing: Toggle(isOn: $hideCancelled, label: {
-                Text("Hide Cancelled")
-            }))
+            Text("\(flight.direction == FlightDirection.arrival ? "From: " : "To: ")" +
+                    "\(flight.otherAirport)")
+            Text(flight.flightStatus)
+                .foregroundColor(Color(flight.timelineColor))
+            Spacer()
         }
-        }
-        
-    
-    
-    
+        .font(.headline)
+        .padding(10)
+    }
 }
 
-
-struct FlightBoard_Previews: PreviewProvider {
+struct FlightBoardInformation_Previews: PreviewProvider {
     static var previews: some View {
-        FlightBoard(boardName: "Test",
-                    flightData: FlightInformation.generateFlights())
+        FlightBoardInformation(flight: FlightInformation.generateFlight(0))
     }
 }
