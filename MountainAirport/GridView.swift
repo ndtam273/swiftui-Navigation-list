@@ -1,15 +1,15 @@
-/// Copyright (c) 2019 Razeware LLC
-///
+/// Copyright (c) 2020 Razeware LLC
+/// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
 /// in the Software without restriction, including without limitation the rights
 /// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 /// copies of the Software, and to permit persons to whom the Software is
 /// furnished to do so, subject to the following conditions:
-///
+/// 
 /// The above copyright notice and this permission notice shall be included in
 /// all copies or substantial portions of the Software.
-///
+/// 
 /// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
 /// distribute, sublicense, create a derivative work, and/or sell copies of the
 /// Software in any work that is designed, intended, or marketed for pedagogical or
@@ -17,7 +17,7 @@
 /// or information technology.  Permission for such use, copying, modification,
 /// merger, publication, distribution, sublicensing, creation of derivative works,
 /// or sale is expressly withheld.
-///
+/// 
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,44 +28,30 @@
 
 import SwiftUI
 
-struct ContentView: View {
-  var flightInfo: [FlightInformation] = FlightInformation.generateFlights()
-  
-  var body: some View {
-    NavigationView {
-      ZStack {
-        Image(systemName: "airplane").resizable()
-          .aspectRatio(contentMode: .fit)
-          .opacity(0.1).rotationEffect(.degrees(-90))
-          .frame(width: 250, height: 250, alignment: .center)
-        VStack(alignment: .leading, spacing: 5) {
-          NavigationLink(destination: FlightBoard(boardName: "Arrivals",
-                  flightData: self.flightInfo
-                    .filter { $0.direction == .arrival })) {
-            Text("Arrivals")
-          }
-          NavigationLink(destination: FlightBoard(boardName: "Departures",
-                flightData: self.flightInfo
-                  .filter { $0.direction == .departure })) {
-            Text("Departures")
-          }
-          NavigationLink(destination: FlightTimeline(flights: self.flightInfo)) {
-            Text("Flight Timeline")
-          }
-          NavigationLink(destination: AirportAwards()) {
-            Text("Awards")
-          }
-          Spacer()
-        }.font(.title).padding(20)
-      Spacer()
-      }.navigationBarTitle(Text("Mountain Airport"))
+struct GridView: View {
+    // MARK: - Properties
+    var columns: Int
+    var items: [Int]
+    var numberRows: Int {
+        guard items.count > 0 else {
+            return 0
+        }
+        return (items.count - 1) / columns + 1
     }
-  }
+    
+    var body: some View {
+        ScrollView {
+            VStack {
+                ForEach(0..<items.count) { index in
+                    Text("\(self.items[index])")
+                }
+            }
+        }
+    }
 }
 
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
-  }
+struct GridView_Previews: PreviewProvider {
+    static var previews: some View {
+        GridView(columns: 1, items: [133, 5, 56, 0, 12])
+    }
 }
