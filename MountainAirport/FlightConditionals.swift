@@ -28,34 +28,49 @@
 
 import SwiftUI
 
-struct FlightRow: View {
+struct FlightConditionals: View {
   var flight: FlightInformation
-  @State private var isPresented = false
+  @State private var rebookAlert: Bool = false
+  @State private var checkInFlight: CheckInInfo?
+  @State private var showFlightHistory = false
   
   var body: some View {
-    Button(action: {
-      // 1
-      self.isPresented.toggle() }) {
-        HStack {
-          Text("\(flight.airline) \(flight.number)")
-            .frame(width: 120, alignment: .leading)
-          Text(flight.otherAirport).frame(alignment: .leading)
-          Spacer()
-          Text(flight.flightStatus).frame(alignment: .trailing)
-          // 2
-        }.sheet(isPresented: $isPresented, onDismiss: {
-          // 3
-          print("Modal dismissed. State now: \(self.isPresented)") }) {
-            // 4
-            FlightBoardInformation(flight: self.flight,
-                                   showModal: self.$isPresented)
+    VStack {
+      if flight.status == .cancelled {
+        Button("Rebook Flight", action: {
+          self.rebookAlert = true })
+          .alert(isPresented: $rebookAlert) {
+            Alert(title: Text("Contact Your Airline"),
+                  message: Text("We cannot rebook this flight. Please contact the airline to reschedule this flight."))
         }
+      }
+      if flight.direction == .departure &&
+        (flight.flightStatus == "On Time" || flight.flightStatus ==
+          "Delayed") {
+        Button("Check In for Flight", action: {
+          self.checkInFlight =
+            CheckInInfo(airline: self.flight.airline, flight: self.flight.number)
+        })
+          .actionSheet(item: $checkInFlight) { flight in
+            ActionSheet(title: Text("Check In"),
+                        message: Text("Check in for \(flight.airline) Flight \(flight.flight)"),
+                        buttons: [
+                          .cancel(Text("Not Now")),
+                          .destructive(Text("Reschedule"), action: {
+                            print("Reschedule flight.") }),
+                          .default(Text("Check In"), action: { print("Check-in for \(flight.airline) \(flight.flight).")
+                          }) ])
+        } }
+      Button("On-Time History") {
+        self.showFlightHistory.toggle() }
+        .popover(isPresented: $showFlightHistory, arrowEdge: .top) { FlightTimeHistory(flight: self.flight)
+      }
     }
   }
 }
 
-struct FlightRow_Previews: PreviewProvider {
+struct FlightConditionals_Previews: PreviewProvider {
   static var previews: some View {
-    FlightRow(flight: FlightInformation.generateFlight(0))
+    FlightConditionals(flight: FlightInformation.generateFlight())
   }
 }

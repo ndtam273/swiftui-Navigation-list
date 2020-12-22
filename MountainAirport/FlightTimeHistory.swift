@@ -35,15 +35,12 @@ struct FlightTimeHistory: View {
     VStack {
       Text("On-Time History for \(flight.airline) Flight \(flight.number)")
       List(flight.history, id:\.day) { h in
-        HStack {
+        HStack{
           Text("\(h.day) day ago - \(h.flightDelayDescription)")
           Spacer()
-        }
-        .background(h.delayColor.opacity(0.3))
-      }
-      .frame(height: 400)
+        }.background(h.delayColor.opacity(0.3))
+      }.frame(height: 400)
     }
-    .padding()
   }
 }
 

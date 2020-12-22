@@ -29,41 +29,29 @@
 import SwiftUI
 
 struct FlightBoard: View {
-    // MARK: - Properties
-    @State private var hideCancelled = false
-    
-    var showFlights: [FlightInformation] {
-        hideCancelled ?
-            flightData.filter{ $0.status != .cancelled } : flightData
-    }
-    var boardName: String
-    var flightData: [FlightInformation]
-    var body: some View {
-        VStack {
-            List(showFlights) { flight in
-                NavigationLink(
-                    destination: FlightBoardInformation(flight: flight),
-                    label: {
-                        FlightRow(flight: flight)
-                    })
-                
-            }
-            .navigationBarTitle(boardName)
-            .navigationBarItems(trailing: Toggle(isOn: $hideCancelled, label: {
-                Text("Hide Cancelled")
-            }))
-        }
-        }
-        
-    
-    
-    
+  var boardName: String
+  var flightData: [FlightInformation]
+  @State private var hideCancelled = false
+  
+  var shownFlights: [FlightInformation] {
+    hideCancelled ?
+      flightData.filter { $0.status != .cancelled } :
+      flightData
+  }
+  
+  var body: some View {
+    List(shownFlights) { fl in
+      FlightRow(flight: fl)
+    }.navigationBarTitle(boardName)
+      .navigationBarItems(trailing:
+        Toggle(isOn: $hideCancelled, label: {
+          Text("Hide Canceled")
+        }))
+  }
 }
 
-
 struct FlightBoard_Previews: PreviewProvider {
-    static var previews: some View {
-        FlightBoard(boardName: "Test",
-                    flightData: FlightInformation.generateFlights())
-    }
+  static var previews: some View {
+    FlightBoard(boardName: "Test", flightData: FlightInformation.generateFlights())
+  }
 }

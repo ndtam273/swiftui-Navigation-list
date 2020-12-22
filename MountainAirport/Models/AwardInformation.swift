@@ -28,41 +28,25 @@
 
 import SwiftUI
 
-struct ContentView: View {
-  var flightInfo: [FlightInformation] = FlightInformation.generateFlights()
-  
-  var body: some View {
-    NavigationView {
-      ZStack {
-        Image(systemName: "airplane").resizable()
-          .aspectRatio(contentMode: .fit)
-          .opacity(0.1).rotationEffect(.degrees(-90))
-          .frame(width: 250, height: 250, alignment: .center)
-        VStack(alignment: .leading, spacing: 5) {
-          NavigationLink(destination: FlightBoard(boardName: "Arrivals",
-                  flightData: self.flightInfo
-                    .filter { $0.direction == .arrival })) {
-            Text("Arrivals")
-          }
-          NavigationLink(destination: FlightBoard(boardName: "Departures",
-                flightData: self.flightInfo
-                  .filter { $0.direction == .departure })) {
-            Text("Departures")
-          }
-          NavigationLink(destination: AirportAwards()) {
-            Text("Awards")
-          }
-          Spacer()
-        }.font(.title).padding(20)
-      Spacer()
-      }.navigationBarTitle(Text("Mountain Airport"))
-    }
-  }
+struct AwardInformation {
+  public var awardView: AnyView
+  public var title: String
+  public var description: String
+  public var awarded: Bool
 }
 
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
+extension AwardInformation: Hashable {
+  static func == (lhs: AwardInformation, rhs: AwardInformation) -> Bool {
+    if lhs.title == rhs.title && lhs.description == rhs.description && lhs.awarded == rhs.awarded {
+      return true
+    }
+    
+    return false
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(title)
+    hasher.combine(description)
+    hasher.combine(awarded)
   }
 }

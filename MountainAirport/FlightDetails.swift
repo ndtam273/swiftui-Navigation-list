@@ -28,41 +28,26 @@
 
 import SwiftUI
 
-struct ContentView: View {
-  var flightInfo: [FlightInformation] = FlightInformation.generateFlights()
+struct FlightDetails: View {
+  var flight: FlightInformation
   
   var body: some View {
-    NavigationView {
-      ZStack {
-        Image(systemName: "airplane").resizable()
-          .aspectRatio(contentMode: .fit)
-          .opacity(0.1).rotationEffect(.degrees(-90))
-          .frame(width: 250, height: 250, alignment: .center)
-        VStack(alignment: .leading, spacing: 5) {
-          NavigationLink(destination: FlightBoard(boardName: "Arrivals",
-                  flightData: self.flightInfo
-                    .filter { $0.direction == .arrival })) {
-            Text("Arrivals")
-          }
-          NavigationLink(destination: FlightBoard(boardName: "Departures",
-                flightData: self.flightInfo
-                  .filter { $0.direction == .departure })) {
-            Text("Departures")
-          }
-          NavigationLink(destination: AirportAwards()) {
-            Text("Awards")
-          }
-          Spacer()
-        }.font(.title).padding(20)
-      Spacer()
-      }.navigationBarTitle(Text("Mountain Airport"))
+    VStack(alignment: .leading, spacing: 5) {
+      Text("\(flight.direction == .arrival ? "Arriving at" : "Departing from") Gate: \(flight.gate)")
+      Text("Scheduled: \(flight.scheduledTimeString)")
+      Text("Current: \(flight.currentTimeString)")
+      Text("Terminal Map").font(.title)
+      Image(flight.gate.starts(with: "A") ? "terminal-a-map" : "terminal-b-map")
+      ForEach(flight.history[0...5], id: \.day) { h in
+        Text("On \(h.shortDate) flight was \(h.status.rawValue)")
+      }
     }
   }
 }
 
-
-struct ContentView_Previews: PreviewProvider {
+struct FlightDetails_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView()
+    FlightDetails(flight: FlightInformation.generateFlights()[0])
   }
 }
+

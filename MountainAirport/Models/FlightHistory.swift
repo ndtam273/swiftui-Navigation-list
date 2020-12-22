@@ -29,31 +29,27 @@
 import SwiftUI
 
 class FlightHistory : NSObject {
-  public var day: Int
-  public var flightId: Int
-  public var date: Date
-  public var direction: FlightDirection
-  public var status: FlightStatus
-  public var scheduledTime: Date
-  public var actualTime: Date?
+  var day: Int
+  var flightId: Int
+  var date: Date
+  var direction: FlightDirection
+  var status: FlightStatus
+  var scheduledTime: Date
+  var actualTime: Date?
   
-  public var shortDate: String {
-    get {
-      let formatter = DateFormatter()
-      formatter.dateFormat = "MMM d"
-      return formatter.string(from: date)
-    }
+  var shortDate: String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MMM d"
+    return formatter.string(from: date)
   }
   
-  public var timeDifference: Int {
-    get {
-      guard let actual = actualTime else { return 60 }
-      let diff = Calendar.current.dateComponents([.minute], from: scheduledTime, to: actual)
-      return diff.minute!
-    }
+  var timeDifference: Int {
+    guard let actual = actualTime else { return 60 }
+    let diff = Calendar.current.dateComponents([.minute], from: scheduledTime, to: actual)
+    return diff.minute!
   }
   
-  public var flightDelayDescription: String {
+  var flightDelayDescription: String {
     if status == .cancelled {
       return "Cancelled"
     }
@@ -67,7 +63,7 @@ class FlightHistory : NSObject {
     }
   }
   
-  public var delayColor: Color {
+  var delayColor: Color {
     if status == .cancelled {
       return Color.init(red: 0.5, green: 0, blue: 0)
     }
@@ -83,12 +79,11 @@ class FlightHistory : NSObject {
     return Color.red
   }
   
-  public func calcOffset(_ width: CGFloat) -> CGFloat {
-    return CGFloat(CGFloat(day-1) * width)
+  func calcOffset(_ width: CGFloat) -> CGFloat {
+    CGFloat(CGFloat(day - 1) * width)
   }
   
-  init(_ day: Int, id: Int, date: Date, direction: FlightDirection, status: FlightStatus, scheduledTime: Date, actualTime: Date?)
-  {
+  init(_ day: Int, id: Int, date: Date, direction: FlightDirection, status: FlightStatus, scheduledTime: Date, actualTime: Date?) {
     self.day = day
     self.flightId = id
     self.date = date

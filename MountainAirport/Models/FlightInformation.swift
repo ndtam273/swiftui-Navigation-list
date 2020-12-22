@@ -36,43 +36,39 @@ enum FlightDirection {
 enum FlightStatus: String, CaseIterable {
   case ontime = "On Time"
   case delayed = "Delayed"
-  case cancelled = "Canceled"
+  case cancelled = "Cancelled"
   case landed = "Landed"
   case departed = "Departed"
 }
 
 class FlightInformation: NSObject {
-  public var id: Int
-  public var airline: String
-  public var number: String
-  public var otherAirport: String
-  public var scheduledTime: Date
-  public var currentTime: Date?
-  public var direction: FlightDirection
-  public var status: FlightStatus
-  public var gate: String
-  public var history: [FlightHistory]
+  var id: Int
+  var airline: String
+  var number: String
+  var otherAirport: String
+  var scheduledTime: Date
+  var currentTime: Date?
+  var direction: FlightDirection
+  var status: FlightStatus
+  var gate: String
+  var history: [FlightHistory]
   
-  public var scheduledTimeString: String {
-    get {
-      let timeFormatter = DateFormatter()
-      timeFormatter.dateStyle = .none
-      timeFormatter.timeStyle = .short
-      return timeFormatter.string(from: scheduledTime)
-    }
+  var scheduledTimeString: String {
+    let timeFormatter = DateFormatter()
+    timeFormatter.dateStyle = .none
+    timeFormatter.timeStyle = .short
+    return timeFormatter.string(from: scheduledTime)
   }
   
   public var currentTimeString: String {
-    get {
-      guard let time = currentTime else { return "N/A" }
-      let timeFormatter = DateFormatter()
-      timeFormatter.dateStyle = .none
-      timeFormatter.timeStyle = .short
-      return timeFormatter.string(from: time)
-    }
+    guard let time = currentTime else { return "N/A" }
+    let timeFormatter = DateFormatter()
+    timeFormatter.dateStyle = .none
+    timeFormatter.timeStyle = .short
+    return timeFormatter.string(from: time)
   }
   
-  public var flightStatus: String {
+  var flightStatus: String {
     let now = Date()
     
     if status == .cancelled {
@@ -89,15 +85,13 @@ class FlightInformation: NSObject {
     return status.rawValue
   }
   
-  public var timeDifference: Int {
-    get {
-      guard let actual = currentTime else { return 60 }
-      let diff = Calendar.current.dateComponents([.minute], from: scheduledTime, to: actual)
-      return diff.minute!
-    }
+  var timeDifference: Int {
+    guard let actual = currentTime else { return 60 }
+    let diff = Calendar.current.dateComponents([.minute], from: scheduledTime, to: actual)
+    return diff.minute!
   }
   
-  public var timelineColor: UIColor {
+  var timelineColor: UIColor {
     if status == .cancelled {
       return UIColor(red: 0.5, green: 0, blue: 0, alpha: 1)
     }
@@ -126,24 +120,8 @@ class FlightInformation: NSObject {
     self.history = []
   }
   
-  func isRebookAvailable() -> Bool {
-    return status == .cancelled
-  }
-  
-  func isCheckInAvailable() -> Bool {
-    return direction == .departure &&
-      (flightStatus == "On Time" || flightStatus == "Delayed")
-  }
-  
   static func generateFlights() -> [FlightInformation] {
-    var flights = [FlightInformation]()
-    
-    for idx in 1...30 {
-      let newFlight = generateFlight(idx)
-      flights.append(newFlight)
-    }
-    
-    return flights
+    (1...30).map { generateFlight($0) }
   }
   
   static func generateFlight() -> FlightInformation {
@@ -219,15 +197,4 @@ class FlightInformation: NSObject {
 }
 
 extension FlightInformation: Identifiable {
-    
-}
-
-extension Array where Element: FlightInformation {
-  func arrivals() -> [FlightInformation] {
-    self.filter { $0.direction == .arrival }
-  }
-  
-  func departures() -> [FlightInformation] {
-    self.filter { $0.direction == .departure }
-  }
 }
